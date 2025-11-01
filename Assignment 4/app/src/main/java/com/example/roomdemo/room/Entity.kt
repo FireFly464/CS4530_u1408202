@@ -2,11 +2,14 @@ package com.example.roomdemo.room
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.roomdemo.FunFact
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity(tableName = "tasks")
-data class TaskEntity(
-    val text: FunFact,
-    @PrimaryKey(autoGenerate = true) val id: Int =0 )
+data class funFactEntity(
+    var text:String,
+    var source_url:String?=null,
+//    val text: FunFact,
+     @PrimaryKey(autoGenerate = false) val id: String )
 
 

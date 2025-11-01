@@ -1,4 +1,4 @@
-package com.example.roomdemo
+ package com.example.roomdemo
 
 import android.app.Application
 import android.os.Bundle
@@ -35,7 +35,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.SharingStarted
-import com.example.roomdemo.room.TaskEntity
+import com.example.roomdemo.room.funFactEntity
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -51,6 +51,8 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
+ @Serializable
+ data class FunFact (var text:String, var source_url:String?=null)
 
 
 class MyViewModel(application: Application) : AndroidViewModel(application) {
@@ -69,13 +71,13 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
     private val funListMutable = MutableStateFlow(listOf<String>())
 
     // Converting the Flow to StateFlow for UI Compose
-    val funListReadOnly:Flow<List<TaskEntity?>> = dao.allTasks
+    val funListReadOnly:Flow<List<funFactEntity?>> = dao.allTasks
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     // Adds new task
     suspend fun addItem (item: String){
         try{
-            val responseText: FunFact = client.get("https://uselessfacts.jsph.pl//api/v2/facts/random").body()
+            val responseText: funFactEntity = client.get("https://uselessfacts.jsph.pl//api/v2/facts/random").body()
             funListMutable.value = funListMutable.value + responseText.text
 
             dao.addTask(responseText)
@@ -86,10 +88,7 @@ class MyViewModel(application: Application) : AndroidViewModel(application) {
             Log.e("FunFact Activity", "Error fetching", e)
         }
     }
-//    fun addItem(item:String)
-//    {
-//        dao.addTask(item)
-//    }
+
 }
 
 class MainActivity : ComponentActivity() {
